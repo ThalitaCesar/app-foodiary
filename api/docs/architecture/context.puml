@@ -1,0 +1,9 @@
+@startuml C4_Context
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(user, "Usuário", "Pessoa que registra suas refeições e hábitos alimentares")
+System(foodiary, "Foodiary API", "Backend serverless para controle alimentar")
+
+Rel(user, foodiary, "Envia fotos e consulta refeições")
+
+@enduml

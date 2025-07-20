@@ -1,0 +1,26 @@
+@startuml C4_Container
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+LAYOUT_WITH_LEGEND()
+
+Person(user, "Usuário", "Usuário final do sistema")
+
+System_Boundary(f, "Foodiary API") {
+    Container(api, "API Gateway + Lambda", "Node.js", "Expõe endpoints para o cliente web e apps")
+    Container(s3, "Amazon S3", "Storage", "Armazena imagens das refeições enviadas")
+    Container(db, "PostgreSQL (Neon)", "Database", "Armazena os dados das refeições e dos usuários")
+    Container(queue, "Amazon SQS", "Message Queue", "Gerencia requisições assíncronas para o processamento de dados")
+    Container(worker, "Lambda Worker", "Node.js", "Processa dados da refeição e atualiza o banco de dados")
+    Container(serverless, "Serverless Framework", "Framework", "Orquestra deploy e gestão dos recursos AWS Lambda")
+    Container(ai, "AI Service", "Modelo de IA", "Realiza análise inteligente das refeições")
+}
+
+Rel(user, api, "Envia/recebe dados e imagens", "HTTPS")
+Rel(api, s3, "Upload/Download de imagens", "HTTPS")
+Rel(api, db, "Leitura e escrita dos dados", "SQL")
+Rel(api, queue, "Envia mensagem para processamento", "JSON")
+Rel(queue, worker, "Aciona função para processar", "Event Trigger")
+Rel(worker, db, "Atualiza dados processados no banco", "SQL")
+Rel(serverless, api, "Gerencia deploy e configurações", "CLI/Config")
+Rel(worker, ai, "Solicita análise inteligente", "API REST/GRPC")
+
+@enduml
