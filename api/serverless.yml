@@ -1,105 +1,114 @@
-org: thalita
-service: api-js-stack-lab
+org: thalita  # Organização usada no Serverless Framework 
+service: api-js-stack-lab  # Nome do serviço, usado para organização e deploy
 
 plugins:
-  - serverless-offline
+  - serverless-offline  # Para rodar o projeto localmente
 
 provider:
-  name: aws
-  region: us-east-1
-  runtime: nodejs22.x
-  architecture: arm64
+  name: aws  
+  region: us-east-1  
+  runtime: nodejs22.x 
+  architecture: arm64  # Arquitetura ARM64, mais econômica em tempo de execução
   environment:
-    DATABASE_URL: ${env:DATABASE_URL}
-    JWT_SECRET: ${env:JWT_SECRET}
-    BUCKET_NAME: !Ref UploadsBucket
-    MEALS_QUEUE_URL: !Ref MealsQueue
+    DATABASE_URL: ${env:DATABASE_URL}  
+    JWT_SECRET: ${env:JWT_SECRET}  
+    BUCKET_NAME: !Ref UploadsBucket  # Nome do bucket S3 gerado automaticamente
+    MEALS_QUEUE_URL: !Ref MealsQueue  # URL da fila SQS usada para processamento de refeições
   iam:
     role:
-      statements:
+      statements:  # Permissões que suas funções terão na AWS
         - Effect: Allow
           Action:
-            - s3:PutObject
-          Resource: !Sub '${UploadsBucket.Arn}/*'
+            - s3:PutObject  # Permite subir arquivos para o bucket
+          Resource: !Sub '${UploadsBucket.Arn}/*'  # Aponta para todos os arquivos do bucket
         - Effect: Allow
-          Action: sqs:SendMessage
-          Resource: !GetAtt MealsQueue.Arn
+          Action: sqs:SendMessage  # Permite enviar mensagens para a fila
+          Resource: !GetAtt MealsQueue.Arn  # ARN da fila SQS principal
 
 package:
-  individually: true
+  individually: true  # Permite empacotar cada função separadamente
 
 build:
   esbuild:
-    minify: true
-    sourcemap: false
+    minify: true  # Minimiza o código no build
+    sourcemap: false  # Não gera sourcemaps
 
-functions:
+functions:  # Define todas as funções Lambda da aplicação
   signin:
     handler: src/functions/signin.handler
     events:
       - httpApi:
           method: POST
           path: /signin
+
   signup:
     handler: src/functions/signup.handler
     events:
       - httpApi:
           method: POST
           path: /signup
+
   me:
     handler: src/functions/me.handler
     events:
       - httpApi:
           method: GET
           path: /me
+
   createMeal:
     handler: src/functions/createMeal.handler
     events:
       - httpApi:
           method: POST
           path: /meals
+
   listMeals:
     handler: src/functions/listMeals.handler
     events:
       - httpApi:
           method: GET
           path: /meals
+
   getMealById:
     handler: src/functions/getMealById.handler
     events:
       - httpApi:
           method: GET
           path: /meals/{mealId}
+
   fileUploadedEvent:
     handler: src/functions/fileUploadedEvent.handler
     events:
       - s3:
-          bucket: !Ref UploadsBucket
-          event: s3:ObjectCreated:*
+          bucket: !Ref UploadsBucket  # Escuta eventos de upload no bucket
+          event: s3:ObjectCreated:*  # Dispara quando um novo objeto for criado
           existing: true
           forceDeploy: true
+
   processMeal:
     handler: src/functions/processMeal.handler
     events:
       - sqs:
-          arn: !GetAtt MealsQueue.Arn
-          batchSize: 1
+          arn: !GetAtt MealsQueue.Arn  # Escuta mensagens da fila SQS
+          batchSize: 1  # Processa uma mensagem por vez
 
 resources:
-  Resources:
+  Resources:  # Recursos que serão criados no CloudFormation
     UploadsBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: jstacklab-v1-foodiary-uploads
+        BucketName: thalitabucket-deploys-2025-07-20-001  # Nome customizado do bucket
+
     MealsQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: meals-queue
-        VisibilityTimeout: 60
-        RedrivePolicy:
-          maxReceiveCount: 1
-          deadLetterTargetArn: !GetAtt MealsDLQ.Arn
+        VisibilityTimeout: 60  # Tempo de processamento antes de reenviar a mensagem
+        RedrivePolicy:  # Política de DLQ (Dead Letter Queue)
+          maxReceiveCount: 1  # Se falhar uma vez, envia para a DLQ
+          deadLetterTargetArn: !GetAtt MealsDLQ.Arn  # Fila de mensagens com erro
+
     MealsDLQ:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: meals-queue-dlq
+        QueueName: meals-queue-dlq  # Fila onde caem as mensagens com erro

@@ -4,6 +4,7 @@ import { usersTable } from '../db/schema';
 import { HttpResponse, ProtectedHttpRequest } from '../types/Http';
 import { ok } from '../utils/http';
 
+ // Busca o usuário no banco de dados filtrando pelo ID recebido do token JWT
 export class MeController {
   static async handle({ userId }: ProtectedHttpRequest): Promise<HttpResponse> {
     const user = await db.query.usersTable.findFirst({

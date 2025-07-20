@@ -1,65 +1,187 @@
+# Documentação da API Foodiary
 
-# Foodiary API Documentation
+A API Foodiary é um backend serverless construído com Node.js, TypeScript, AWS Lambda, API Gateway, S3, SQS e PostgreSQL (Neon + Drizzle ORM). Ela fornece endpoints para autenticação de usuários, gerenciamento de refeições e cálculo automático de metas nutricionais.
 
-Foodiary API is a serverless backend built with Node.js, TypeScript, AWS Lambda, API Gateway, S3, SQS, and PostgreSQL (via Neon and Drizzle ORM). It provides endpoints for user authentication, meal management, and nutritional goal calculation.
+## Principais Funcionalidades
 
-## Main Feature
+* Autenticação de Usuário: Cadastro e login com autenticação baseada em JWT.
+* Gerenciamento de Refeições: Criar, listar e consultar refeições, incluindo upload de arquivos (áudio/imagem) para análise.
+* Metas Nutricionais: Calcula automaticamente as metas diárias com base no perfil do usuário.
+* Arquitetura Serverless: Utiliza AWS Lambda, S3 para armazenamento de arquivos e SQS para fila de processamento de refeições.
 
-* User Authentication: Sign up and sign in with JWT-based authentication.
-* Meal Management: Create, list, and retrieve meals, including file uploads (audio/image) for meal analysis.
-* Nutritional Goals: Automatically calculates daily nutritional goals based on user profile.
-* Serverless Architecture: Uses AWS Lambda, S3 for file storage, and SQS for meal processing queue.
+## Estrutura de Pastas
 
-## Directory Structure
+- `src/clients/`: Clientes AWS SDK (S3, SQS)
+- `src/controllers/`: Lógica de negócio dos endpoints
+- `src/db/`: Esquema e conexão do banco de dados
+- `src/functions/`: Handlers das Lambdas
+- `src/lib/`: Utilitários (JWT, cálculo de metas)
+- `src/queues/`: Processadores de fila (ex: análise de refeições)
+- `src/types/`: Tipos TypeScript
+- `src/utils/`: Funções auxiliares
 
-- `src/clients/`: AWS SDK clients (S3, SQS)
-- `src/controllers/`: Business logic for API endpoints
-- `src/db/`: Database schema and connection
-- `src/functions/`: Lambda handlers for each endpoint/event
-- `src/lib/`: Utility libraries (JWT, goal calculation)
-- `src/queues/`: Queue processors (e.g., meal analysis)
-- `src/types/`: TypeScript types
-- `src/utils/`: Helper functions
+## Variáveis de Ambiente
 
-## Environment Variables
+Veja o arquivo `.env.example` para os dados necessários:
 
-See `.env.example` for required variables:
+- `DATABASE_URL`: String de conexão do PostgreSQL
+- `JWT_SECRET`: Segredo para assinatura JWT
 
-- `DATABASE_URL`: PostgreSQL connection string
-- `JWT_SECRET`: Secret for JWT signing
+## Endpoints da API
 
-## API Endpoints
+| Endpoint            | Método | Descrição                                 | Requer Autenticação |
+|---------------------|--------|-------------------------------------------|---------------------|
+| `/signin`           | POST   | Login do usuário                          | Não                |
+| `/signup`           | POST   | Cadastro do usuário                       | Não                |
+| `/me`               | GET    | Buscar perfil do usuário autenticado      | Sim                |
+| `/meals`            | POST   | Criar nova refeição (gera URL de upload)  | Sim                |
+| `/meals`            | GET    | Listar refeições por data                 | Sim                |
+| `/meals/{mealId}`   | GET    | Buscar refeição por ID                    | Sim                |
 
-| Endpoint            | Method | Description                        | Auth Required |
-|---------------------|--------|------------------------------------|--------------|
-| `/signin`           | POST   | User sign in                       | No           |
-| `/signup`           | POST   | User sign up                       | No           |
-| `/me`               | GET    | Get current user profile           | Yes          |
-| `/meals`            | POST   | Create a new meal (get upload URL) | Yes          |
-| `/meals`            | GET    | List meals for a specific date     | Yes          |
-| `/meals/{mealId}`   | GET    | Get meal by ID                     | Yes          |
+## Upload e Processamento de Arquivos
 
-## File Upload & Processing
+- **Criar Refeição:** Retorna uma URL pré-assinada do S3 para upload do arquivo da refeição.
+- **Evento de Upload:** Disparado quando um arquivo é enviado ao S3, enviando mensagem para a fila SQS.
+- **Processar Refeição:** Lambda acionada pela SQS processa a refeição, atualizando status e resultado da análise.
 
-- **Create Meal:** Returns a presigned S3 URL for uploading a meal file.
-- **File Uploaded Event:** Triggered when a file is uploaded to S3, sends a message to SQS.
-- **Process Meal:** SQS-triggered Lambda processes the meal, updates status and analysis results.
+## Esquema do Banco de Dados
 
-## Database Schema
+Veja `src/db/schema.ts`:
 
-See `src/db/schema.ts`:
+- **usersTable:** Armazena perfil do usuário e metas nutricionais.
+- **mealsTable:** Armazena refeições, status, tipo de entrada e resultados de análise.
 
-- **usersTable:** Stores user profile and nutritional goals.
-- **mealsTable:** Stores meal records, status, input type, analysis results.
+## Desenvolvimento
 
-## Development
+### Pré-requisitos
 
-- Install dependencies: `npm install`
-- Local development: `npm run dev`
-- Deploy: `serverless deploy`
+- Node.js (recomendado: versão 22)
+- npm (gerenciador de pacotes do Node)
+- Conta na AWS (para variáveis e deploy)
+- Criar uma conta na Neon ORM ([https://neon.com](https://neon.com)), criar um projeto com PostgreSQL e inserir a chave no .env em DATABASE_URL
+- Criar uma conta na Serverless ([https://www.serverless.com](https://www.serverless.com))
 
-## References
+### Instalação
 
-- `serverless.yml`: Serverless configuration
-- `drizzle.config.ts`: ORM configuration
+1. Clone o repositório:
+   ```sh
+   git clone https://github.com/ThalitaCesar/diary-food.git
+   cd api
+   ```
+
+2. Instale as dependências:
+   ```sh
+   npm install
+   ```
+
+3. Configure as variáveis de ambiente:
+   - Copie o arquivo `.env.example` para `.env` e preencha com seus dados:
+     ```sh
+     cp .env.example .env
+     ```
+   - Edite o `.env` com sua URL do banco de dados e segredo JWT.
+
+### Como rodar localmente (utilize Postman ou Insomnia para testar)
+
+- Para rodar em modo desenvolvimento:
+  ```sh
+  npm run dev
+  ```
+- Para rodar o ambiente serverless offline:
+  ```sh
+  sls offline
+  ```
+
+O servidor estará disponível em `http://localhost:3000`.
+
+## Permissões e Configuração AWS
+
+### IAM
+
+1. No IAM, crie um novo usuário.
+2. Crie um grupo e insira políticas ao grupo (exemplo: [AdministratorAccess](https://us-east-1.console.aws.amazon.com/iam/home?region=us-east-1#/policies/details/arn%3Aaws%3Aiam%3A%3Aaws%3Apolicy%2FAdministratorAccess) — apenas para estudo).
+3. Cada permissão gera um JSON, disponível no botão "+".
+4. Após criar o usuário, acesse "Security Credentials" para gerar uma Access Key (necessária para o CLI).  
+   **Atenção:** Salve a chave secreta, pois ela não será exibida novamente.
+
+### AWS CLI
+
+- Instale o AWS CLI: [Guia de instalação](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+- Após instalar, configure com:
+  ```sh
+  aws configure
+  ```
+  Preencha:
+  - AWS Access Key ID
+  - AWS Secret Access Key
+  - Região (ex: us-west-2)
+  - Output format (ex: json)
+
+- Teste a configuração:
+  ```sh
+  aws s3 ls
+  ```
+
+### Criar um bucket S3
+
+1. Acesse o serviço S3 no console AWS.
+2. Clique em "Create Bucket", defina um nome único e crie o bucket.
+3. Verifique com:
+   ```sh
+   aws s3 ls
+   ```
+
+---
+
+## Serverless Framework
+
+- Crie sua conta: [Serverless](https://www.serverless.com)
+- Instale globalmente:
+  ```sh
+  npm i serverless -g
+  ```
+- Faça login:
+  ```sh
+  sls login
+  ```
+- Crie seu projeto usando um template do Serverless.
+- No arquivo `serverless.yml`, configure:
+  ```yaml
+  provider:
+    name: aws
+    runtime: nodejs22.x
+    architecture: arm64
+    region: us-west-2
+    memorySize: 128
+  ```
+- Altere o nome do bucket S3 para um nome único na propriedade `bucketName`.
+
+### Deploy
+
+Após configurar tudo, execute:
+
+```sh
+serverless deploy
+```
+
+O endpoint será exibido no terminal após o deploy.
+
+---
+
+## Referências
+
+- `serverless.yml`: Configuração do Serverless
+- `drizzle.config.ts`: Configuração do Drizzle ORM
+
+---
+
+### Serviços AWS utilizados
+
+- **EC2:** Serviço de máquinas virtuais na nuvem.
+- **IAM:** Gerenciamento de usuários, grupos e permissões de acesso aos recursos AWS.
+- **S3:** Armazenamento de arquivos.
+- **Lambda:** Execução de funções serverless, responsável por processar requisições da API e eventos.
+- **Simple Queue Service (SQS):** Gerenciamento de filas para processamento assíncrono, utilizado para organizar o fluxo de análise dos arquivos enviados.
+
+> O código deste projeto possui comentários explicativos em pontos estratégicos para facilitar o entendimento da lógica e do fluxo de execução.
 
