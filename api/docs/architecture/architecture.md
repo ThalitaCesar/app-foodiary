@@ -59,8 +59,8 @@ foodiary-api/
 │   └── architecture/
 │       ├── context.puml         # Diagrama de contexto (PlantUML)
 │       ├── container.puml       # Diagrama de containers (PlantUML)
-│       ├── context.png          # (opcional) imagem gerada do contexto
-│       ├── container.png        # (opcional) imagem gerada do container
+│       ├── context.png          # imagem gerada do contexto
+│       ├── container.png        # imagem gerada do container
 │       └── README.md            # Documentação da arquitetura
 ```
 
