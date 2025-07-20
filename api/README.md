@@ -1,69 +1,65 @@
-<!--
-title: 'AWS Simple HTTP Endpoint example in NodeJS'
-description: 'This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.'
-layout: Doc
-framework: v4
-platform: AWS
-language: nodeJS
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, Inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
 
-# Serverless Framework Node HTTP API on AWS
+# Foodiary API Documentation
 
-This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.
+Foodiary API is a serverless backend built with Node.js, TypeScript, AWS Lambda, API Gateway, S3, SQS, and PostgreSQL (via Neon and Drizzle ORM). It provides endpoints for user authentication, meal management, and nutritional goal calculation.
 
-This template does not include any kind of persistence (database). For more advanced examples, check out the [serverless/examples repository](https://github.com/serverless/examples/) which includes Typescript, Mongo, DynamoDB and other examples.
+## Main Feature
 
-## Usage
+* User Authentication: Sign up and sign in with JWT-based authentication.
+* Meal Management: Create, list, and retrieve meals, including file uploads (audio/image) for meal analysis.
+* Nutritional Goals: Automatically calculates daily nutritional goals based on user profile.
+* Serverless Architecture: Uses AWS Lambda, S3 for file storage, and SQS for meal processing queue.
 
-### Deployment
+## Directory Structure
 
-In order to deploy the example, you need to run the following command:
+- `src/clients/`: AWS SDK clients (S3, SQS)
+- `src/controllers/`: Business logic for API endpoints
+- `src/db/`: Database schema and connection
+- `src/functions/`: Lambda handlers for each endpoint/event
+- `src/lib/`: Utility libraries (JWT, goal calculation)
+- `src/queues/`: Queue processors (e.g., meal analysis)
+- `src/types/`: TypeScript types
+- `src/utils/`: Helper functions
 
-```
-serverless deploy
-```
+## Environment Variables
 
-After running deploy, you should see output similar to:
+See `.env.example` for required variables:
 
-```
-Deploying "serverless-http-api" to stage "dev" (us-east-1)
+- `DATABASE_URL`: PostgreSQL connection string
+- `JWT_SECRET`: Secret for JWT signing
 
-✔ Service deployed to stack serverless-http-api-dev (91s)
+## API Endpoints
 
-endpoint: GET - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/
-functions:
-  hello: serverless-http-api-dev-hello (1.6 kB)
-```
+| Endpoint            | Method | Description                        | Auth Required |
+|---------------------|--------|------------------------------------|--------------|
+| `/signin`           | POST   | User sign in                       | No           |
+| `/signup`           | POST   | User sign up                       | No           |
+| `/me`               | GET    | Get current user profile           | Yes          |
+| `/meals`            | POST   | Create a new meal (get upload URL) | Yes          |
+| `/meals`            | GET    | List meals for a specific date     | Yes          |
+| `/meals/{mealId}`   | GET    | Get meal by ID                     | Yes          |
 
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [HTTP API (API Gateway V2) event docs](https://www.serverless.com/framework/docs/providers/aws/events/http-api).
+## File Upload & Processing
 
-### Invocation
+- **Create Meal:** Returns a presigned S3 URL for uploading a meal file.
+- **File Uploaded Event:** Triggered when a file is uploaded to S3, sends a message to SQS.
+- **Process Meal:** SQS-triggered Lambda processes the meal, updates status and analysis results.
 
-After successful deployment, you can call the created application via HTTP:
+## Database Schema
 
-```
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/
-```
+See `src/db/schema.ts`:
 
-Which should result in response similar to:
+- **usersTable:** Stores user profile and nutritional goals.
+- **mealsTable:** Stores meal records, status, input type, analysis results.
 
-```json
-{ "message": "Go Serverless v4! Your function executed successfully!" }
-```
+## Development
 
-### Local development
+- Install dependencies: `npm install`
+- Local development: `npm run dev`
+- Deploy: `serverless deploy`
 
-The easiest way to develop and test your function is to use the `dev` command:
+## References
 
-```
-serverless dev
-```
+- `serverless.yml`: Serverless configuration
+- `drizzle.config.ts`: ORM configuration
 
-This will start a local emulator of AWS Lambda and tunnel your requests to and from AWS Lambda, allowing you to interact with your function as if it were running in the cloud.
-
-Now you can invoke the function as before, but this time the function will be executed locally. Now you can develop your function locally, invoke it, and see the results immediately without having to re-deploy.
-
-When you are done developing, don't forget to run `serverless deploy` to deploy the function to the cloud.
