@@ -1,0 +1,105 @@
+org: thalita
+service: api-js-stack-lab
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  region: us-east-1
+  runtime: nodejs22.x
+  architecture: arm64
+  environment:
+    DATABASE_URL: ${env:DATABASE_URL}
+    JWT_SECRET: ${env:JWT_SECRET}
+    BUCKET_NAME: !Ref UploadsBucket
+    MEALS_QUEUE_URL: !Ref MealsQueue
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+          Resource: !Sub '${UploadsBucket.Arn}/*'
+        - Effect: Allow
+          Action: sqs:SendMessage
+          Resource: !GetAtt MealsQueue.Arn
+
+package:
+  individually: true
+
+build:
+  esbuild:
+    minify: true
+    sourcemap: false
+
+functions:
+  signin:
+    handler: src/functions/signin.handler
+    events:
+      - httpApi:
+          method: POST
+          path: /signin
+  signup:
+    handler: src/functions/signup.handler
+    events:
+      - httpApi:
+          method: POST
+          path: /signup
+  me:
+    handler: src/functions/me.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /me
+  createMeal:
+    handler: src/functions/createMeal.handler
+    events:
+      - httpApi:
+          method: POST
+          path: /meals
+  listMeals:
+    handler: src/functions/listMeals.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /meals
+  getMealById:
+    handler: src/functions/getMealById.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /meals/{mealId}
+  fileUploadedEvent:
+    handler: src/functions/fileUploadedEvent.handler
+    events:
+      - s3:
+          bucket: !Ref UploadsBucket
+          event: s3:ObjectCreated:*
+          existing: true
+          forceDeploy: true
+  processMeal:
+    handler: src/functions/processMeal.handler
+    events:
+      - sqs:
+          arn: !GetAtt MealsQueue.Arn
+          batchSize: 1
+
+resources:
+  Resources:
+    UploadsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: jstacklab-v1-foodiary-uploads
+    MealsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: meals-queue
+        VisibilityTimeout: 60
+        RedrivePolicy:
+          maxReceiveCount: 1
+          deadLetterTargetArn: !GetAtt MealsDLQ.Arn
+    MealsDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: meals-queue-dlq
