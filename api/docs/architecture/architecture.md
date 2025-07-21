@@ -61,7 +61,7 @@ api/
 │       ├── container.puml       # Diagrama de containers (PlantUML)
 │       ├── context.png          # imagem gerada do contexto
 │       ├── container.png        # imagem gerada do container
-│       └── README.md            # Documentação da arquitetura
+│       └── architecture.md            # Documentação da arquitetura
 ```
 
 ---
