@@ -1,4 +1,4 @@
-# Documentação da API Foodiary
+# API Foodiary
 
 A API Foodiary é um backend serverless construído com Node.js, TypeScript, AWS Lambda, API Gateway, S3, SQS e PostgreSQL (Neon + Drizzle ORM). Ela fornece endpoints para autenticação de usuários, gerenciamento de refeições e cálculo automático de metas nutricionais.
 
