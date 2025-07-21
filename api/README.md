@@ -79,7 +79,7 @@ Veja `src/db/schema.ts`:
      ```sh
      cp .env.example .env
      ```
-   - Edite o `.env` com sua URL do banco de dados e segredo JWT.
+   - Edite o `.env` com sua URL do banco de dados e JWT_SECRET.
 
 ### Como rodar localmente (utilize Postman ou Insomnia para testar)
 
