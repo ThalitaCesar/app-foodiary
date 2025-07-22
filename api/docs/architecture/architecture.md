@@ -54,14 +54,14 @@ O diagrama de containers detalha os principais componentes internos do Foodiary 
 ## 4. Estrutura de Pastas da Documentação
 
 ```
-foodiary-api/
+api/
 ├── docs/
 │   └── architecture/
 │       ├── context.puml         # Diagrama de contexto (PlantUML)
 │       ├── container.puml       # Diagrama de containers (PlantUML)
 │       ├── context.png          # imagem gerada do contexto
 │       ├── container.png        # imagem gerada do container
-│       └── README.md            # Documentação da arquitetura
+│       └── architecture.md            # Documentação da arquitetura
 ```
 
 ---

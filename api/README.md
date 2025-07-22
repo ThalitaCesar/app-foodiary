@@ -1,4 +1,4 @@
-# Documentação da API Foodiary
+# API Foodiary
 
 A API Foodiary é um backend serverless construído com Node.js, TypeScript, AWS Lambda, API Gateway, S3, SQS e PostgreSQL (Neon + Drizzle ORM). Ela fornece endpoints para autenticação de usuários, gerenciamento de refeições e cálculo automático de metas nutricionais.
 
@@ -79,7 +79,7 @@ Veja `src/db/schema.ts`:
      ```sh
      cp .env.example .env
      ```
-   - Edite o `.env` com sua URL do banco de dados e segredo JWT.
+   - Edite o `.env` com sua URL do banco de dados e JWT_SECRET.
 
 ### Como rodar localmente (utilize Postman ou Insomnia para testar)
 
@@ -92,7 +92,7 @@ Veja `src/db/schema.ts`:
   sls offline
   ```
 
-O servidor estará disponível em `http://localhost:3000`.
+O servidor estará disponível em `http://localhost:3000`.   
 
 ### Comandos Úteis
 
@@ -118,6 +118,8 @@ serverless deploy
 ```
 
 O endpoint será exibido no terminal após o deploy.
+
+> Veja no arquivo de docs infraestruture.md como realizar a configuração do aws e serverless framework
 
 ---
 
