@@ -4,6 +4,6 @@
 Person(user, "Usuário", "Pessoa que registra suas refeições e hábitos alimentares")
 System(foodiary, "Foodiary API", "Backend serverless para controle alimentar")
 
-Rel(user, foodiary, "Envia fotos e consulta refeições")
+Rel(user, foodiary, "Envia fotos e aúdios, consulta refeições e calorias")
 
 @enduml
