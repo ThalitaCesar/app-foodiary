@@ -115,22 +115,3 @@ No seu `index.ts`:
 import 'dotenv/config';
 ```
 
----
-
-## 🧠 Sobre o Modelo `whisper-1`
-
-* Modelo de transcrição de áudio da OpenAI.
-* Suporta múltiplos idiomas, incluindo português.
-* Ideal para transformar gravações de voz em texto bruto.
-
----
-
-## ✅ Próximos Passos
-
-* Implementar NLP para interpretar os textos transcritos.
-* Automatizar o preenchimento de campos com base na fala (nome da refeição, alimentos, etc).
-* Tratar arquivos de diferentes extensões (e.g. `.mp3`, `.webm`, `.ogg`).
-
----
-
-Feito
