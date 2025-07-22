@@ -1,20 +1,20 @@
-# 🤖 Integração com OpenAI Whisper API (Transcrição de Áudio)
+# Integração com OpenAI Whisper API (Transcrição de Áudio)
 
 Este projeto utiliza a API da OpenAI para realizar **transcrição automática de áudios** com o modelo `whisper-1`, transformando arquivos `.m4a` em texto utilizando Node.js e TypeScript.
 
 ---
 
-## 📘 Documentação Oficial da OpenAI
+## Documentação Oficial da OpenAI
 
 Acesse a documentação completa em:
 
-👉 https://platform.openai.com/docs/overview
+ https://platform.openai.com/docs/overview
 
 > ⚠️ A API da OpenAI é **paga por uso**. É necessário cadastrar um cartão de crédito.
 
 ---
 
-## 🧱 Etapas de Integração
+## Etapas de Integração
 
 ### 1. Criar um Projeto na OpenAI
 
