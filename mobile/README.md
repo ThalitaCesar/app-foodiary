@@ -57,9 +57,3 @@ Os formulários usam React Hook Form com schemas Zod para validação. O fluxo d
 - Sistema de cores em `src/styles/colors.ts`
 - Função utilitária `cn()` para mesclagem condicional de classes
 
-## Notas de Configuração
-
-- TypeScript com modo estrito habilitado
-- Nova arquitetura do Expo ativada
-- Sem configuração de testes atualmente (sem scripts de teste no package.json)
-- Sem configuração de linting na raiz do projeto
