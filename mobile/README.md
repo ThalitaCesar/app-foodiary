@@ -1,7 +1,5 @@
 # Mobile
 
-Este arquivo fornece orientações para o Claude Code (claude.ai/code) ao trabalhar com o código deste repositório.
-
 ## Visão Geral do Projeto
 
 Foodiary é um aplicativo de diário alimentar feito em React Native com Expo. Utiliza o expo-router para navegação com grupos de rotas para autenticação (rotas públicas/privadas), React Hook Form para manipulação de formulários, Zod para validação e NativeWind (Tailwind CSS) para estilização.
