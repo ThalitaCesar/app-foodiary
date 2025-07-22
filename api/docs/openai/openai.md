@@ -4,13 +4,13 @@ Este projeto utiliza a API da OpenAI para realizar **transcrição automática d
 
 ---
 
-## Documentação Oficial da OpenAI
+## 📘 Documentação Oficial da OpenAI
 
 Acesse a documentação completa em:
 
  https://platform.openai.com/docs/overview
 
-> ⚠️ A API da OpenAI é **paga por uso**. É necessário cadastrar um cartão de crédito.
+> A API da OpenAI é **paga por uso**. É necessário cadastrar um cartão de crédito.
 
 ---
 
@@ -18,9 +18,8 @@ Acesse a documentação completa em:
 
 ### 1. Criar um Projeto na OpenAI
 
-1. No topo da plataforma, clique em `Project Default` ou no nome da organização.
+1. No topo da plataforma, clique em `Project Default` ou no nome da organização. (é preciso fazer login)
 2. Selecione **“Create Project”** e insira o nome do projeto.
-3. Você poderá visualizar e gerenciar seus projetos em **“Manage Projects”**.
 
 ---
 
@@ -28,7 +27,7 @@ Acesse a documentação completa em:
 
 1. Vá em **Dashboard > API Keys**.
 2. Clique em **“Create new secret key”**.
-3. Escolha a opção **Service Account**, defina um nome e selecione o projeto.
+3. Escolha a opção **Service Account**, defina um nome e selecione o projeto criado.
 4. Copie a chave gerada — ela será exibida **apenas uma vez**.
 
 > Exemplo (NÃO compartilhe sua chave real):
@@ -100,7 +99,7 @@ main();
 
 ---
 
-## 🔐 Boas Práticas
+## Boas Práticas
 
 * Nunca exponha sua chave da OpenAI em código versionado.
 * Use bibliotecas como `dotenv` para carregar as variáveis de ambiente com segurança:

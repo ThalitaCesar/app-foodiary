@@ -21,6 +21,7 @@ provider:
         - Effect: Allow
           Action:
             - s3:PutObject  # Permite subir arquivos para o bucket
+            - s3:GetObject # Permite ler arquivos do bucketß
           Resource: !Sub '${UploadsBucket.Arn}/*'  # Aponta para todos os arquivos do bucket
         - Effect: Allow
           Action: sqs:SendMessage  # Permite enviar mensagens para a fila
