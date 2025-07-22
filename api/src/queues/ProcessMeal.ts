@@ -1,6 +1,10 @@
+import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { eq } from 'drizzle-orm';
+import { Readable } from 'node:stream';
+import { s3Client } from '../clients/s3Client';
 import { db } from '../db';
 import { mealsTable } from '../db/schema';
+import { transcribeAudio } from '../services/ai';
 
 // Classe responsável por processar uma refeição a partir de um arquivo
 export class ProcessMeal {
@@ -29,6 +33,29 @@ export class ProcessMeal {
 
     try {
       // CHAMAR A IA...
+        if (meal.inputType === 'audio') {
+        const command = new GetObjectCommand({
+          Bucket: process.env.BUCKET_NAME,
+          Key: meal.inputFileKey,
+        });
+
+        const { Body } = await s3Client.send(command);
+
+        if (!Body || !(Body instanceof Readable)) {
+          throw new Error('Cannot load the audio file.');
+        }
+
+        const chunks = [];
+        for await (const chunk of Body) {
+          chunks.push(chunk);
+        }
+
+        const audioFileBuffer = Buffer.concat(chunks);
+
+        const transcription = await transcribeAudio(audioFileBuffer);
+
+        console.log({ transcription });
+      }
 
       await db
         .update(mealsTable)

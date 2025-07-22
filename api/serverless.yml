@@ -12,6 +12,7 @@ provider:
   environment:
     DATABASE_URL: ${env:DATABASE_URL}  
     JWT_SECRET: ${env:JWT_SECRET}  
+    OPENAI_API_KEY: ${env:OPENAI_API_KEY}  # Chave da API do OpenAI, usada para gerar imagen
     BUCKET_NAME: !Ref UploadsBucket  # Nome do bucket S3 gerado automaticamente
     MEALS_QUEUE_URL: !Ref MealsQueue  # URL da fila SQS usada para processamento de refeições
   iam:

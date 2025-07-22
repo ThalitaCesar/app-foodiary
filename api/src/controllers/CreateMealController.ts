@@ -37,7 +37,7 @@ export class CreateMealController {
       Key: fileKey, // Caminho/chave do arquivo no bucket
     });
 
-    // Gera uma URL assinada com validade de 10 minutos (600 segundos)
+    // Gera uma URL assinada parao o s3 com validade de 10 minutos (600 segundos)
     const presignedURL = await getSignedUrl(s3Client, command, { expiresIn: 600 });
 
     // Cria um novo registro de refeição no banco de dados, com status "uploading"

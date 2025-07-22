@@ -94,67 +94,20 @@ Veja `src/db/schema.ts`:
 
 O servidor estará disponível em `http://localhost:3000`.
 
-## Permissões e Configuração AWS
+### Comandos Úteis
 
-### IAM
-
-1. No IAM, crie um novo usuário.
-2. Crie um grupo e insira políticas ao grupo (exemplo: [AdministratorAccess](https://us-east-1.console.aws.amazon.com/iam/home?region=us-east-1#/policies/details/arn%3Aaws%3Aiam%3A%3Aaws%3Apolicy%2FAdministratorAccess) — apenas para estudo).
-3. Cada permissão gera um JSON, disponível no botão "+".
-4. Após criar o usuário, acesse "Security Credentials" para gerar uma Access Key (necessária para o CLI).  
-   **Atenção:** Salve a chave secreta, pois ela não será exibida novamente.
-
-### AWS CLI
-
-- Instale o AWS CLI: [Guia de instalação](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-- Após instalar, configure com:
+- **Remover deploy:**  
   ```sh
-  aws configure
+  serverless remove
   ```
-  Preencha:
-  - AWS Access Key ID
-  - AWS Secret Access Key
-  - Região (ex: us-west-2)
-  - Output format (ex: json)
-
-- Teste a configuração:
+- **Ver funções e endpoints:**  
   ```sh
-  aws s3 ls
+  serverless info
   ```
-
-### Criar um bucket S3
-
-1. Acesse o serviço S3 no console AWS.
-2. Clique em "Create Bucket", defina um nome único e crie o bucket.
-3. Verifique com:
-   ```sh
-   aws s3 ls
-   ```
-
----
-
-## Serverless Framework
-
-- Crie sua conta: [Serverless](https://www.serverless.com)
-- Instale globalmente:
+- **Deploy apenas de uma função específica:**  
   ```sh
-  npm i serverless -g
+  serverless deploy function --function NOME_DA_FUNCAO
   ```
-- Faça login:
-  ```sh
-  sls login
-  ```
-- Crie seu projeto usando um template do Serverless.
-- No arquivo `serverless.yml`, configure:
-  ```yaml
-  provider:
-    name: aws
-    runtime: nodejs22.x
-    architecture: arm64
-    region: us-west-2
-    memorySize: 128
-  ```
-- Altere o nome do bucket S3 para um nome único na propriedade `bucketName`.
 
 ### Deploy
 
