@@ -25,7 +25,8 @@ A API Foodiary é um backend serverless construído com Node.js, TypeScript, AWS
 Veja o arquivo `.env.example` para os dados necessários:
 
 - `DATABASE_URL`: String de conexão do PostgreSQL
-- `JWT_SECRET`: Segredo para assinatura JWT
+- `JWT_SECRET`: Secret para assinatura JWT
+- `OPENAI_API_KEY`: Key do OpenAI API.
 
 ## Endpoints da API
 
