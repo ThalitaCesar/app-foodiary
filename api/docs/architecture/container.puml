@@ -11,7 +11,7 @@ System_Boundary(f, "Foodiary API") {
     Container(queue, "Amazon SQS", "Message Queue", "Gerencia requisições assíncronas para o processamento de dados")
     Container(worker, "Lambda Worker", "Node.js", "Processa dados da refeição e atualiza o banco de dados")
     Container(serverless, "Serverless Framework", "Framework", "Orquestra deploy e gestão dos recursos AWS Lambda")
-    Container(ai, "AI Service", "Modelo de IA", "Realiza análise inteligente das refeições")
+    Container(ai, "AI Service", "OpenAI API", "Transcreve os audios e imagens em texto")
 }
 
 Rel(user, api, "Envia/recebe dados e imagens", "HTTPS")
